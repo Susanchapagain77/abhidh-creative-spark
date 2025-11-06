@@ -1,4 +1,51 @@
-# Welcome to your Lovable project
+# Abhidh Creative Spark
+
+Creative services platform for Abhidh Group - offering digital marketing, IT development, and creative solutions.
+
+## 🚀 Quick Start
+
+```bash
+npm install
+npm run dev
+```
+
+## 🛠️ Tech Stack
+
+- **React 18** - UI library
+- **TypeScript** - Type safety
+- **Vite** - Fast build tool
+- **Tailwind CSS** - Utility-first styling
+- **Shadcn UI** - Component library
+- **React Router** - Navigation
+
+## 📁 Project Structure
+
+```
+src/
+├── components/     # Reusable UI components
+├── pages/         # Page components
+├── hooks/         # Custom React hooks
+├── lib/           # Utility functions
+└── assets/        # Static assets
+```
+
+## 🎨 Design System
+
+- **Primary Color**: Yellow (#d4af37)
+- **Secondary Color**: Dark Gray
+- **Accent Color**: Yellow
+- **Font**: Inter, Geist Sans
+
+## 🔗 Connected to Abhidh Group
+
+This app is part of the Abhidh Group ecosystem:
+- Main Site: http://localhost:8080/
+- Academy: http://localhost:8081/
+- Creative: http://localhost:8082/
+
+## 📝 License
+
+All rights reserved © Abhidh Group 2024
 
 ## Project info
 

@@ -49,12 +49,12 @@ export default function Gallery() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="gradient-hero py-24 sm:py-32">
+      <section className="bg-secondary py-24 sm:py-32">
         <div className="container mx-auto px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-primary-foreground sm:text-6xl mb-6 animate-fade-in">
+          <h1 className="text-4xl font-bold tracking-tight text-secondary-foreground sm:text-6xl mb-6 animate-fade-in">
             Our Portfolio
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-primary-foreground/90 animate-fade-in-up">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-secondary-foreground/90 animate-fade-in-up">
             Explore our latest projects and success stories that showcase our expertise
           </p>
         </div>

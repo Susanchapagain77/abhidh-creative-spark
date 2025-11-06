@@ -67,12 +67,12 @@ export default function Services() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="gradient-hero py-24 sm:py-32">
+      <section className="bg-secondary py-24 sm:py-32">
         <div className="container mx-auto px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-primary-foreground sm:text-6xl mb-6 animate-fade-in">
+          <h1 className="text-4xl font-bold tracking-tight text-secondary-foreground sm:text-6xl mb-6 animate-fade-in">
             Our Services
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-primary-foreground/90 animate-fade-in-up">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-secondary-foreground/90 animate-fade-in-up">
             Comprehensive digital solutions tailored to help your business thrive in today's competitive landscape
           </p>
         </div>
@@ -150,16 +150,16 @@ export default function Services() {
       </section>
 
       {/* CTA Section */}
-      <section className="gradient-primary py-24">
+      <section className="bg-secondary py-24">
         <div className="container mx-auto px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl mb-6">
+          <h2 className="text-3xl font-bold tracking-tight text-secondary-foreground sm:text-4xl mb-6">
             Ready to Elevate Your Business?
           </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-primary-foreground/80 mb-10">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-secondary-foreground/80 mb-10">
             Let's discuss how our services can help you achieve your business goals
           </p>
           <Link to="/contact">
-            <Button variant="cta" size="lg" className="shadow-accent">
+            <Button variant="cta" size="lg">
               Schedule a Free Consultation
             </Button>
           </Link>

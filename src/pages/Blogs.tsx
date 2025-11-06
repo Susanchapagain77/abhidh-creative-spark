@@ -75,12 +75,12 @@ export default function Blogs() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="gradient-hero py-24 sm:py-32">
+      <section className="bg-secondary py-24 sm:py-32">
         <div className="container mx-auto px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-primary-foreground sm:text-6xl mb-6 animate-fade-in">
+          <h1 className="text-4xl font-bold tracking-tight text-secondary-foreground sm:text-6xl mb-6 animate-fade-in">
             Insights & Updates
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-primary-foreground/90 animate-fade-in-up">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-secondary-foreground/90 animate-fade-in-up">
             Stay informed with the latest trends, tips, and insights from the world of digital marketing and technology
           </p>
         </div>
@@ -162,12 +162,12 @@ export default function Blogs() {
       </section>
 
       {/* Newsletter CTA */}
-      <section className="gradient-primary py-24">
+      <section className="bg-secondary py-24">
         <div className="container mx-auto px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl mb-6">
+          <h2 className="text-3xl font-bold tracking-tight text-secondary-foreground sm:text-4xl mb-6">
             Stay Updated
           </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-primary-foreground/80 mb-10">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-secondary-foreground/80 mb-10">
             Subscribe to our newsletter and never miss an update on the latest digital trends and insights
           </p>
         </div>

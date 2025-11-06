@@ -83,28 +83,28 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-secondary">
         <div className="absolute inset-0 z-0">
           <img
             src={heroImage}
             alt="Abhidh Creative - Digital Innovation"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover opacity-40"
           />
-          <div className="absolute inset-0 gradient-hero opacity-90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-secondary to-secondary/80" />
         </div>
         
         <div className="container relative z-10 mx-auto px-6 lg:px-8">
           <div className="max-w-3xl animate-fade-in-up">
             <div className="flex items-center gap-2 mb-6">
-              <Sparkles className="h-6 w-6 text-secondary animate-float" />
-              <span className="text-sm font-semibold text-secondary uppercase tracking-wide">
+              <Sparkles className="h-6 w-6 text-primary animate-float" />
+              <span className="text-sm font-semibold text-primary uppercase tracking-wide">
                 Where Creativity Meets Technology
               </span>
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-primary-foreground sm:text-6xl lg:text-7xl mb-6">
+            <h1 className="text-4xl font-bold tracking-tight text-secondary-foreground sm:text-6xl lg:text-7xl mb-6">
               Transform Your Digital Presence
             </h1>
-            <p className="text-lg leading-8 text-primary-foreground/90 mb-8">
+            <p className="text-lg leading-8 text-secondary-foreground/90 mb-8">
               Abhidh Creative is where creativity meets strategy, and innovation meets technology. 
               We help businesses stand out in crowded markets and grow in meaningful ways through 
               cutting-edge digital solutions.
@@ -117,7 +117,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link to="/contact">
-                <Button variant="outline" size="lg" className="bg-background/10 backdrop-blur-sm border-primary-foreground/20 text-primary-foreground hover:bg-background/20">
+                <Button variant="outline" size="lg" className="border-secondary-foreground/30 text-secondary-foreground hover:bg-secondary-foreground/10">
                   Get Free Consultation
                 </Button>
               </Link>
@@ -269,17 +269,17 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="gradient-primary py-24 sm:py-32">
+      <section className="bg-secondary py-24 sm:py-32">
         <div className="container mx-auto px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl mb-6">
+          <h2 className="text-3xl font-bold tracking-tight text-secondary-foreground sm:text-4xl mb-6">
             Ready to Build the Future Together?
           </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-primary-foreground/80 mb-10">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-secondary-foreground/80 mb-10">
             We don't just provide services – we partner with businesses to build sustainable growth. 
             Whether you're a startup or an established company, our strategies deliver measurable results.
           </p>
           <Link to="/contact">
-            <Button variant="cta" size="lg" className="shadow-accent">
+            <Button variant="cta" size="lg">
               Get a Free Consultation
             </Button>
           </Link>
