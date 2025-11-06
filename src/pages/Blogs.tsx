@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -147,10 +148,12 @@ export default function Blogs() {
                 </CardContent>
                 
                 <CardFooter className="p-6 pt-0">
-                  <Button variant="link" className="p-0 h-auto group/btn">
-                    Read More
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
+                  <Link to={`/blogs/${post.slug}`}>
+                    <Button variant="link" className="p-0 h-auto group/btn">
+                      Read More
+                      <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
                 </CardFooter>
               </Card>
             ))}

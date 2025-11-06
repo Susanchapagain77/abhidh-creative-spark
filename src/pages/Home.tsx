@@ -6,6 +6,12 @@ import heroImage from "@/assets/hero-creative.jpg";
 import digitalMarketingImg from "@/assets/service-digital-marketing.jpg";
 import developmentImg from "@/assets/service-development.jpg";
 import creativeImg from "@/assets/service-creative.jpg";
+import projectEcommerce from "@/assets/project-ecommerce.jpg";
+import projectMobileApp from "@/assets/project-mobile-app.jpg";
+import projectBranding from "@/assets/project-branding.jpg";
+import teamMember1 from "@/assets/team-member-1.jpg";
+import teamMember2 from "@/assets/team-member-2.jpg";
+import teamMember3 from "@/assets/team-member-3.jpg";
 
 const services = [
   {
@@ -28,6 +34,48 @@ const services = [
     image: creativeImg,
     icon: Palette,
     link: "/services#creative-solutions",
+  },
+];
+
+const pastProjects = [
+  {
+    title: "E-Commerce Revolution",
+    description: "Complete e-commerce platform with 250% increase in online sales",
+    image: projectEcommerce,
+    stats: { metric: "Revenue Growth", value: "+250%" },
+  },
+  {
+    title: "FinTech Mobile App",
+    description: "Cross-platform mobile banking app with 100K+ downloads",
+    image: projectMobileApp,
+    stats: { metric: "Active Users", value: "100K+" },
+  },
+  {
+    title: "Premium Brand Identity",
+    description: "Complete rebrand for luxury hospitality chain across 15 properties",
+    image: projectBranding,
+    stats: { metric: "Brand Recognition", value: "+180%" },
+  },
+];
+
+const teamMembers = [
+  {
+    name: "Rajesh Sharma",
+    role: "IT Manager & Co-Founder",
+    image: teamMember1,
+    bio: "15+ years of experience in software development and IT strategy",
+  },
+  {
+    name: "Priya Thapa",
+    role: "Creative Director",
+    image: teamMember2,
+    bio: "Award-winning designer specializing in brand identity and UI/UX",
+  },
+  {
+    name: "Anil Kumar",
+    role: "Digital Marketing Lead",
+    image: teamMember3,
+    bio: "Certified digital marketer with proven track record in SEO and PPC",
   },
 ];
 
@@ -123,6 +171,98 @@ export default function Home() {
                   </CardContent>
                 </Card>
               </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Past Projects Section */}
+      <section className="py-24 sm:py-32 bg-muted/30">
+        <div className="container mx-auto px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center mb-16 animate-fade-in">
+            <h2 className="text-base font-semibold leading-7 text-secondary">Our Work</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+              Past Projects That Delivered Results
+            </p>
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
+              Real projects, real impact, real growth for our clients
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            {pastProjects.map((project, index) => (
+              <Card
+                key={project.title}
+                className="group overflow-hidden border-border/50 hover:shadow-accent transition-smooth animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.15}s` }}
+              >
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-smooth"
+                  />
+                  <div className="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-40 transition-smooth" />
+                  <div className="absolute bottom-4 right-4 bg-background/95 backdrop-blur-sm rounded-lg p-3 shadow-custom-md">
+                    <p className="text-xs font-semibold text-muted-foreground">{project.stats.metric}</p>
+                    <p className="text-2xl font-bold text-secondary">{project.stats.value}</p>
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-semibold mb-2 group-hover:text-secondary transition-smooth">
+                    {project.title}
+                  </h3>
+                  <p className="text-muted-foreground">{project.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <Link to="/gallery">
+              <Button variant="secondary" size="lg" className="group">
+                View All Projects
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="py-24 sm:py-32">
+        <div className="container mx-auto px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center mb-16 animate-fade-in">
+            <h2 className="text-base font-semibold leading-7 text-secondary">Our Team</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+              Meet the Experts Behind Your Success
+            </p>
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
+              A passionate team of professionals dedicated to transforming your vision into reality
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {teamMembers.map((member, index) => (
+              <Card
+                key={member.name}
+                className="group text-center overflow-hidden border-border/50 hover:shadow-custom-lg transition-smooth animate-fade-in"
+                style={{ animationDelay: `${index * 0.15}s` }}
+              >
+                <div className="relative h-80 overflow-hidden">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-smooth"
+                  />
+                  <div className="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-20 transition-smooth" />
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
+                  <p className="text-secondary font-medium mb-3">{member.role}</p>
+                  <p className="text-sm text-muted-foreground">{member.bio}</p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
