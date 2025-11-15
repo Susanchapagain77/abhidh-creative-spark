@@ -1,76 +1,102 @@
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
-import digitalMarketingImg from "@/assets/service-digital-marketing.jpg";
-import developmentImg from "@/assets/service-development.jpg";
-import creativeImg from "@/assets/service-creative.jpg";
-import heroImage from "@/assets/hero-creative.jpg";
+import { Button } from "@/components/ui/button";
+import { fetchFromApi, PaginatedResponse, buildAssetUrl } from "@/lib/api";
+import { stripHtml, cn } from "@/lib/utils";
 
-const portfolioItems = [
-  {
-    title: "Social Media Campaign",
-    category: "Digital Marketing",
-    image: digitalMarketingImg,
-    description: "Complete social media overhaul for a tech startup, resulting in 300% engagement increase",
-  },
-  {
-    title: "E-Commerce Platform",
-    category: "Web Development",
-    image: developmentImg,
-    description: "Custom e-commerce solution with integrated payment gateway and inventory management",
-  },
-  {
-    title: "Brand Identity Design",
-    category: "Creative Design",
-    image: creativeImg,
-    description: "Complete brand identity package including logo, color palette, and style guide",
-  },
-  {
-    title: "Mobile App Development",
-    category: "App Development",
-    image: heroImage,
-    description: "Cross-platform mobile app with seamless user experience and modern UI",
-  },
-  {
-    title: "SEO Optimization",
-    category: "Digital Marketing",
-    image: digitalMarketingImg,
-    description: "SEO strategy implementation leading to first-page rankings for key terms",
-  },
-  {
-    title: "Video Production",
-    category: "Creative Design",
-    image: creativeImg,
-    description: "Promotional video campaign with animated graphics and professional editing",
-  },
-];
+type GalleryPhoto = {
+  id: number;
+  photo_path: string | null;
+  caption?: string | null;
+};
 
-const categories = ["All", "Digital Marketing", "Web Development", "App Development", "Creative Design"];
+type GalleryItem = {
+  id: number;
+  title: string;
+  description: string | null;
+  option: string | null;
+  photos: GalleryPhoto[];
+  created_at?: string;
+};
+
+const optionLabels: Record<string, string> = {
+  campus: "Campus",
+  classroom: "Classroom",
+  events: "Events",
+  success: "Success Stories",
+  workshop: "Workshops",
+  virtual: "Virtual Sessions",
+};
+
+const formatOption = (value: string | null | undefined) => {
+  if (!value) {
+    return "Highlights";
+  }
+  return optionLabels[value] ?? value.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+};
 
 export default function Gallery() {
+  const [activeFilter, setActiveFilter] = useState("all");
+
+  const { data, isLoading, isError, error, refetch } = useQuery<PaginatedResponse<GalleryItem>>({
+    queryKey: ["creative-gallery"],
+    queryFn: () => fetchFromApi<PaginatedResponse<GalleryItem>>("/galleries?per_page=30"),
+  });
+
+  const galleries = data?.data ?? [];
+
+  const categories = useMemo(() => {
+    const unique = new Map<string, string>();
+    unique.set("all", "All");
+
+    galleries.forEach((gallery) => {
+      const key = gallery.option ?? "highlights";
+      if (!unique.has(key)) {
+        unique.set(key, formatOption(gallery.option));
+      }
+    });
+
+    return Array.from(unique.entries()).map(([id, label]) => ({ id, label }));
+  }, [galleries]);
+
+  const filteredGalleries =
+    activeFilter === "all"
+      ? galleries
+      : galleries.filter((gallery) => (gallery.option ?? "highlights") === activeFilter);
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-secondary py-24 sm:py-32">
-        <div className="container mx-auto px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-secondary-foreground sm:text-6xl mb-6 animate-fade-in">
+      <section className="relative overflow-hidden py-24 sm:py-32">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-secondary/20 to-background" />
+        <div className="container relative mx-auto px-6 text-center lg:px-8">
+          <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-6xl animate-fade-in">
             Our Portfolio
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-secondary-foreground/90 animate-fade-in-up">
-            Explore our latest projects and success stories that showcase our expertise
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground animate-fade-in-up">
+            Explore real-world highlights captured from projects, events, and brand experiences crafted by Abhidh Creative.
           </p>
         </div>
       </section>
 
       {/* Filter Tabs */}
-      <section className="py-12 border-b">
+      <section className="border-b py-12">
         <div className="container mx-auto px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (
-              <button
-                key={category}
-                className="px-6 py-2 rounded-full text-sm font-semibold transition-smooth bg-muted hover:bg-secondary hover:text-secondary-foreground"
+              <Button
+                key={category.id}
+                variant={activeFilter === category.id ? "hero" : "outline"}
+                size="sm"
+                className={cn(
+                  "rounded-full px-6 py-2 text-sm font-semibold transition-all",
+                  activeFilter === category.id ? "" : "border-white/20 bg-white/5 hover:bg-white/12"
+                )}
+                onClick={() => setActiveFilter(category.id)}
               >
-                {category}
-              </button>
+                {category.label}
+              </Button>
             ))}
           </div>
         </div>
@@ -79,49 +105,114 @@ export default function Gallery() {
       {/* Gallery Grid */}
       <section className="py-24">
         <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {portfolioItems.map((item, index) => (
-              <Card
-                key={item.title}
-                className="group overflow-hidden border-border/50 hover:shadow-accent transition-smooth cursor-pointer animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-smooth"
-                  />
-                  <div className="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-60 transition-smooth" />
-                  <div className="absolute top-4 right-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-secondary text-secondary-foreground">
-                      {item.category}
-                    </span>
-                  </div>
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-secondary transition-smooth">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+          {isError ? (
+            <div className="mx-auto max-w-xl rounded-3xl border border-destructive/30 bg-destructive/10 p-8 text-center backdrop-blur-lg">
+              <h2 className="text-xl font-semibold text-destructive">Unable to load portfolio highlights</h2>
+              <p className="mt-2 text-sm text-destructive/80">{error instanceof Error ? error.message : "Please try again."}</p>
+              <Button variant="outline" size="sm" className="mt-6" onClick={() => refetch()}>
+                Retry
+              </Button>
+            </div>
+          ) : null}
 
-      {/* Case Studies CTA */}
-      <section className="gradient-primary py-24">
-        <div className="container mx-auto px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl mb-6">
-            Want to See More?
-          </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-primary-foreground/80 mb-10">
-            Discover detailed case studies and learn how we helped businesses achieve their goals
-          </p>
+          {isLoading ? (
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={`gallery-skeleton-${index}`}
+                  className="h-72 rounded-3xl border border-white/10 bg-card/40 backdrop-blur-lg shadow-[0_20px_45px_-35px_rgba(18,40,90,0.5)] animate-pulse"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredGalleries.map((gallery, index) => {
+                const coverPhoto = gallery.photos?.[0];
+                const coverUrl = buildAssetUrl(coverPhoto?.photo_path);
+                const categoryLabel = formatOption(gallery.option);
+
+                return (
+                  <Card
+                    key={gallery.id}
+                    className="group overflow-hidden border-white/10 bg-card/60 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_100px_-50px_rgba(18,40,90,0.65)] animate-fade-in"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <div className="relative h-64 overflow-hidden">
+                      {coverUrl ? (
+                        <img
+                          src={coverUrl}
+                          alt={coverPhoto?.caption ?? gallery.title}
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/15 to-accent/10 text-primary">
+                          No image available
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                      <div className="absolute top-4 right-4 rounded-full border border-white/20 bg-background/80 px-3 py-1 text-xs font-semibold text-primary backdrop-blur">
+                        {categoryLabel}
+                      </div>
+                    </div>
+                    <CardContent className="space-y-4 p-6">
+                      <div className="space-y-2">
+                        <h3 className="text-xl font-semibold text-foreground">{gallery.title}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {stripHtml(gallery.description) ||
+                            "Visual moments that highlight our creative process and outcomes for clients."}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground/80">
+                        <span className="inline-flex h-2 w-2 rounded-full bg-primary/80" />
+                        <span>
+                          Captured{" "}
+                          <strong className="text-foreground">
+                            {gallery.created_at
+                              ? new Date(gallery.created_at).toLocaleDateString(undefined, {
+                                  month: "long",
+                                  year: "numeric",
+                                })
+                              : "recently"}
+                          </strong>
+                        </span>
+                      </div>
+                      {gallery.photos?.slice(1, 4).length ? (
+                        <div className="flex items-center gap-3">
+                          {gallery.photos.slice(1, 4).map((photo) => {
+                            const thumbUrl = buildAssetUrl(photo.photo_path);
+                            return thumbUrl ? (
+                              <img
+                                key={photo.id}
+                                src={thumbUrl}
+                                alt={photo.caption ?? gallery.title}
+                                className="h-14 w-14 rounded-xl object-cover opacity-90 transition-all group-hover:opacity-100"
+                              />
+                            ) : (
+                              <div
+                                key={photo.id}
+                                className="h-14 w-14 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20"
+                              />
+                            );
+                          })}
+                          {gallery.photos.length > 4 ? (
+                            <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[11px] font-semibold text-muted-foreground/80 backdrop-blur">
+                              +{gallery.photos.length - 4}
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+
+          {!isLoading && !filteredGalleries.length && !isError ? (
+            <div className="mt-16 text-center text-muted-foreground">
+              No gallery items in this category yet. Please check back soon.
+            </div>
+          ) : null}
         </div>
       </section>
     </div>

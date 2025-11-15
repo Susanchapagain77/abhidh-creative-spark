@@ -1,69 +1,29 @@
 import { Link } from "react-router-dom";
-import { TrendingUp, Code, Palette, CheckCircle, ArrowRight } from "lucide-react";
+import { ArrowRight, BarChart, Clock, Layers, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import digitalMarketingImg from "@/assets/service-digital-marketing.jpg";
-import developmentImg from "@/assets/service-development.jpg";
-import creativeImg from "@/assets/service-creative.jpg";
+import { Badge } from "@/components/ui/badge";
+import { usePrograms } from "@/hooks/usePrograms";
+import { hexToRgba, stripHtml } from "@/lib/utils";
 
-const services = [
-  {
-    id: "digital-marketing",
-    title: "Digital Marketing",
-    icon: TrendingUp,
-    image: digitalMarketingImg,
-    description: "We design end-to-end digital marketing solutions that help businesses get discovered, attract customers, and increase sales.",
-    details: "From social media campaigns that connect emotionally with audiences to SEO strategies that improve online rankings, and from Google Ads campaigns that deliver instant visibility to data-driven reporting, we ensure every rupee you spend brings value.",
-    features: [
-      "Social Media Marketing & Management",
-      "Search Engine Optimization (SEO)",
-      "Google Ads & PPC Campaigns",
-      "Content Marketing Strategy",
-      "Email Marketing Automation",
-      "Analytics & Performance Tracking",
-      "Influencer Marketing",
-      "Brand Awareness Campaigns",
-    ],
-  },
-  {
-    id: "it-development",
-    title: "IT & Development Services",
-    icon: Code,
-    image: developmentImg,
-    description: "A great business needs a strong digital foundation. We build robust, scalable, and user-friendly digital products.",
-    details: "Our IT services include website design and development, mobile apps, e-commerce platforms, and custom software solutions. We focus on user-friendly design, robust functionality, and long-term support to keep businesses ahead in the digital era.",
-    features: [
-      "Custom Website Development",
-      "E-Commerce Solutions",
-      "Mobile App Development (iOS & Android)",
-      "Custom Software Development",
-      "API Development & Integration",
-      "Cloud Solutions & Hosting",
-      "Database Design & Management",
-      "Maintenance & Technical Support",
-    ],
-  },
-  {
-    id: "creative-solutions",
-    title: "Creative Solutions",
-    icon: Palette,
-    image: creativeImg,
-    description: "A brand is not just a logo – it is a story. We craft identities that are unique, professional, and memorable.",
-    details: "Our creative team helps businesses craft identities that stand out. From branding and graphic design to multimedia production and campaign strategy, we provide the creative spark that makes your brand shine.",
-    features: [
-      "Brand Identity & Logo Design",
-      "Graphic Design & Visual Content",
-      "Video Production & Animation",
-      "Marketing Collateral Design",
-      "UI/UX Design",
-      "Photography & Image Editing",
-      "Campaign Creative Strategy",
-      "Print & Digital Media Design",
-    ],
-  },
-];
+const deriveHighlights = (description?: string | null) => {
+  if (!description) {
+    return [];
+  }
+
+  const sanitized = stripHtml(description);
+  const splits = sanitized
+    .split(/[\n\.]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return splits.slice(0, 4);
+};
 
 export default function Services() {
+  const { programs, isLoading, isError, error, refetch } = usePrograms(9);
+  const hasPrograms = programs.length > 0;
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -81,71 +41,139 @@ export default function Services() {
       {/* Services Details */}
       <section className="py-24">
         <div className="container mx-auto px-6 lg:px-8">
-          <div className="space-y-32">
-            {services.map((service, index) => (
-              <div
-                key={service.id}
-                id={service.id}
-                className={`grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16 items-center ${
-                  index % 2 === 1 ? "lg:flex-row-reverse" : ""
-                }`}
-              >
-                <div className={`${index % 2 === 1 ? "lg:order-2" : ""} animate-fade-in`}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 rounded-xl gradient-accent">
-                      <service.icon className="h-6 w-6 text-accent-foreground" />
-                    </div>
-                    <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                      {service.title}
-                    </h2>
-                  </div>
-                  
-                  <p className="text-lg text-foreground mb-4">
-                    {service.description}
-                  </p>
-                  
-                  <p className="text-muted-foreground mb-6">
-                    {service.details}
-                  </p>
+          {isError ? (
+            <div className="mx-auto max-w-xl rounded-3xl border border-destructive/30 bg-destructive/10 p-8 text-center backdrop-blur-lg">
+              <h2 className="text-xl font-semibold text-destructive">Unable to load services</h2>
+              <p className="mt-2 text-sm text-destructive/80">
+                {error instanceof Error ? error.message : "Please try again later."}
+              </p>
+              <Button variant="outline" size="sm" className="mt-6" onClick={() => refetch()}>
+                <RefreshCcw className="mr-2 h-4 w-4" />
+                Retry
+              </Button>
+            </div>
+          ) : null}
 
-                  <Card className="gradient-card border-border/50">
-                    <CardHeader>
-                      <CardTitle className="text-xl">What We Offer</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {service.features.map((feature) => (
-                          <li key={feature} className="flex items-start gap-2">
-                            <CheckCircle className="h-5 w-5 text-secondary mt-0.5 flex-shrink-0" />
-                            <span className="text-sm">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
+          {isLoading ? (
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div
+                  key={`service-skeleton-${index}`}
+                  className="h-96 rounded-3xl border border-white/10 bg-card/40 backdrop-blur-lg shadow-[0_20px_55px_-40px_rgba(18,40,90,0.55)] animate-pulse"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+              {(hasPrograms ? programs : []).map((program, index) => {
+                const highlights = deriveHighlights(program.description);
+                const accent = program.accentColor ?? "#1d4ed8";
+                const accentLight = hexToRgba(accent, 0.15);
+                const accentBorder = hexToRgba(accent, 0.35);
+
+                return (
+                  <Card
+                    key={program.id}
+                    className="group relative overflow-hidden border border-white/10 bg-card/65 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_45px_110px_-55px_rgba(18,40,90,0.7)]"
+                    style={{ animationDelay: `${index * 0.12}s` }}
+                  >
+                    <div
+                      className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                      style={{
+                        background: `linear-gradient(150deg, ${hexToRgba(accent, 0.2)}, transparent 60%)`,
+                      }}
+                    />
+                    <CardContent className="relative space-y-6 p-10">
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <Badge
+                          className="border border-white/20 bg-white/10 text-xs font-semibold uppercase tracking-wide text-primary backdrop-blur"
+                          style={{ color: accent, borderColor: accentBorder, backgroundColor: accentLight }}
+                        >
+                          {program.categoryLabel}
+                        </Badge>
+                        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-muted-foreground backdrop-blur">
+                          <Layers className="h-3.5 w-3.5 text-primary" />
+                          <span>{program.courses_count ?? 0} offerings</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h2 className="text-3xl font-bold tracking-tight text-foreground">{program.name}</h2>
+                        <p className="text-muted-foreground/90 leading-relaxed">
+                          {stripHtml(program.description) ||
+                            "Experience a curated mix of strategy, design, and technology tailored to your goals."}
+                        </p>
+                      </div>
+
+                      {highlights.length ? (
+                        <Card className="border border-white/10 bg-white/5 backdrop-blur">
+                          <CardHeader className="pb-3">
+                            <CardTitle className="flex items-center gap-2 text-base font-semibold text-foreground">
+                              <BarChart className="h-4 w-4 text-primary" />
+                              Key outcomes
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <ul className="grid grid-cols-1 gap-3 text-sm text-muted-foreground">
+                              {highlights.map((highlight, itemIndex) => (
+                                <li key={`${program.id}-highlight-${itemIndex}`} className="flex items-start gap-2 leading-relaxed">
+                                  <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ backgroundColor: accent }} />
+                                  {highlight}
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
+                      ) : null}
+
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground/80">
+                          <Clock className="h-4 w-4 text-primary" />
+                          <span>
+                            Updated{" "}
+                            <strong className="text-foreground">
+                              {program.updated_at
+                                ? new Date(program.updated_at).toLocaleDateString(undefined, {
+                                    year: "numeric",
+                                    month: "short",
+                                  })
+                                : "recently"}
+                            </strong>
+                          </span>
+                        </div>
+                        <Link to={`/contact?program=${program.id}`}>
+                          <Button variant="hero" size="lg" className="group rounded-full">
+                            Partner with us
+                            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                          </Button>
+                        </Link>
+                      </div>
                     </CardContent>
                   </Card>
+                );
+              })}
 
-                  <div className="mt-6">
+              {!isLoading && !hasPrograms ? (
+                <Card className="border border-dashed border-white/20 bg-card/40 p-10 text-center text-muted-foreground">
+                  <CardHeader>
+                    <CardTitle className="text-2xl font-semibold text-foreground">Services coming soon</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p>
+                      We are curating new creative and technology programs for our partners. Let us know what you need and we&apos;ll build it
+                      together.
+                    </p>
                     <Link to="/contact">
-                      <Button variant="hero" size="lg" className="group">
-                        Get Started
-                        <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                      <Button variant="secondary">
+                        Start a conversation
+                        <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </Link>
-                  </div>
-                </div>
-
-                <div className={`${index % 2 === 1 ? "lg:order-1" : ""} animate-slide-in-right`}>
-                  <div className="relative rounded-2xl overflow-hidden shadow-custom-lg">
-                    <img
-                      src={service.image}
-                      alt={service.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ) : null}
+            </div>
+          )}
         </div>
       </section>
 

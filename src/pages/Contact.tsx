@@ -1,10 +1,11 @@
-import { useState } from "react";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useContactForm } from "@/hooks/useContactForm";
+import { useSearchParams } from "react-router-dom";
 
 const contactInfo = [
   {
@@ -25,54 +26,14 @@ const contactInfo = [
 ];
 
 export default function Contact() {
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-  });
+  const [searchParams] = useSearchParams();
+  const defaultSubject = searchParams.get("program")
+    ? `Creative program inquiry: ${searchParams.get("program")}`
+    : searchParams.get("service")
+      ? `Service inquiry: ${searchParams.get("service")}`
+      : "";
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.message) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Here you would typically send the form data to your backend
-    console.log("Form submitted:", formData);
-    
-    toast({
-      title: "Message Sent!",
-      description: "We'll get back to you as soon as possible.",
-    });
-
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-    });
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const { form, onSubmit, isSubmitting } = useContactForm(defaultSubject);
 
   return (
     <div className="flex flex-col">
@@ -122,87 +83,97 @@ export default function Contact() {
             <Card className="shadow-custom-lg border-border/50">
               <CardContent className="p-8">
                 <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium mb-2">
-                        Full Name *
-                      </label>
-                      <Input
-                        id="name"
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                      <FormField
+                        control={form.control}
                         name="name"
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="John Doe"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="John Doe" autoComplete="name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium mb-2">
-                        Email Address *
-                      </label>
-                      <Input
-                        id="email"
+                      <FormField
+                        control={form.control}
                         name="email"
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="john@example.com"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email Address *</FormLabel>
+                            <FormControl>
+                              <Input type="email" placeholder="john@example.com" autoComplete="email" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium mb-2">
-                        Phone Number
-                      </label>
-                      <Input
-                        id="phone"
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                      <FormField
+                        control={form.control}
                         name="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="+977-9800000000"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone Number</FormLabel>
+                            <FormControl>
+                              <Input placeholder="+977-9800000000" autoComplete="tel" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    <div>
-                      <label htmlFor="subject" className="block text-sm font-medium mb-2">
-                        Subject
-                      </label>
-                      <Input
-                        id="subject"
+                      <FormField
+                        control={form.control}
                         name="subject"
-                        type="text"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        placeholder="How can we help?"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Subject</FormLabel>
+                            <FormControl>
+                              <Input placeholder="How can we help?" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium mb-2">
-                      Message *
-                    </label>
-                    <Textarea
-                      id="message"
+                    <FormField
+                      control={form.control}
                       name="message"
-                      rows={6}
-                      required
-                      value={formData.message}
-                      onChange={handleChange}
-                      placeholder="Tell us about your project..."
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Message *</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              rows={6}
+                              placeholder="Tell us about your project..."
+                              className="resize-y"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
 
-                  <Button type="submit" variant="hero" size="lg" className="w-full group">
-                    Send Message
-                    <Send className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </form>
+                    <Button
+                      type="submit"
+                      variant="hero"
+                      size="lg"
+                      className="group w-full"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Sending..." : "Send Message"}
+                      <Send className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </Button>
+                  </form>
+                </Form>
               </CardContent>
             </Card>
           </div>

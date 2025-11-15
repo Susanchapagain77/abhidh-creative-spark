@@ -18,26 +18,29 @@ const navigation = {
 
 export default function Footer() {
   return (
-    <footer className="gradient-primary text-primary-foreground" aria-labelledby="footer-heading">
+    <footer className="relative overflow-hidden bg-gradient-to-br from-primary via-accent to-primary/80 text-primary-foreground" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
-      <div className="container mx-auto px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.25),transparent_55%)]" />
+      <div className="container relative mx-auto px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8">
             <span className="text-2xl font-bold">
-              <span className="text-secondary">Abhidh</span>
-              <span className="text-primary-foreground"> Creative</span>
+              <span className="text-white">Abhidh</span>
+              <span className="text-primary-foreground/90"> Creative</span>
             </span>
             <p className="text-sm leading-6 text-primary-foreground/80">
               Where creativity meets strategy, and innovation meets technology. 
               Building digital solutions that drive meaningful growth.
             </p>
             <div className="flex items-start gap-2">
-              <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0 text-secondary" />
+              <MapPin className="mt-0.5 h-5 w-5 flex-shrink-0 text-white/80" />
               <div className="text-sm">
                 <p>Nardevi, Kathmandu, Nepal</p>
-                <p className="mt-1 text-primary-foreground/80">Training Venue: Jawalakhel, Ekantakuna Marg, Lalitpur</p>
+                <p className="mt-1 text-primary-foreground/80">
+                  Training Venue: Jawalakhel, Ekantakuna Marg, Lalitpur
+                </p>
               </div>
             </div>
           </div>
@@ -50,7 +53,7 @@ export default function Footer() {
                     <li key={item.name}>
                       <Link
                         to={item.href}
-                        className="text-sm leading-6 text-primary-foreground/80 hover:text-secondary transition-smooth"
+                        className="text-sm leading-6 text-primary-foreground/80 transition-colors hover:text-white"
                       >
                         {item.name}
                       </Link>
@@ -65,7 +68,7 @@ export default function Footer() {
                     <li key={item.name}>
                       <a
                         href={item.href}
-                        className="text-sm leading-6 text-primary-foreground/80 hover:text-secondary transition-smooth flex items-center gap-2"
+                        className="flex items-center gap-2 text-sm leading-6 text-primary-foreground/80 transition-colors hover:text-white"
                       >
                         <item.icon className="h-4 w-4" />
                         {item.name}

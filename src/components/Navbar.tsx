@@ -24,13 +24,15 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-custom-sm">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/70 backdrop-blur-xl shadow-[0_20px_60px_-35px_rgba(18,40,90,0.55)]">
       <nav className="container mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="text-2xl font-bold">
-              <span className="text-gradient">Abhidh</span>
-              <span className="text-primary"> Creative</span>
+              <span className="bg-gradient-to-r from-primary via-accent to-primary/80 bg-clip-text text-transparent">
+                Abhidh
+              </span>
+              <span className="text-foreground"> Creative</span>
             </span>
           </Link>
         </div>
@@ -52,11 +54,12 @@ export default function Navbar() {
               key={item.name}
               to={item.href}
               className={cn(
-                "text-sm font-semibold leading-6 transition-smooth relative",
+                "relative text-sm font-semibold leading-6 transition-colors duration-300",
                 isActive(item.href)
-                  ? "text-secondary"
-                  : "text-foreground hover:text-secondary",
-                isActive(item.href) && "after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-secondary"
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-primary",
+                isActive(item.href) &&
+                  "after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:bg-gradient-to-r after:from-primary after:via-accent after:to-primary/80"
               )}
             >
               {item.name}
@@ -66,7 +69,7 @@ export default function Navbar() {
         
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Link to="/contact">
-            <Button variant="hero" size="default">
+            <Button variant="hero" size="default" className="rounded-full">
               Get Started
             </Button>
           </Link>
@@ -115,7 +118,7 @@ export default function Navbar() {
                 </div>
                 <div className="py-6">
                   <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="hero" size="default" className="w-full">
+                <Button variant="hero" size="default" className="w-full rounded-full">
                       Get Started
                     </Button>
                   </Link>

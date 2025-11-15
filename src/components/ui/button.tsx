@@ -9,14 +9,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/85 shadow-custom-md hover:shadow-custom-lg transition-smooth",
+        default:
+          "group relative overflow-hidden bg-gradient-to-r from-primary via-accent to-primary/80 text-primary-foreground font-semibold shadow-[0_25px_60px_-30px_rgba(18,40,90,0.65)] transition-all duration-300 hover:-translate-y-0.5 focus-visible:ring-primary/60",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/70 shadow-custom-sm hover:shadow-accent transition-smooth",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        outline:
+          "border border-white/15 bg-white/5 text-foreground transition-colors duration-300 hover:bg-white/12 hover:text-foreground shadow-[0_12px_30px_-20px_rgba(18,40,90,0.4)]",
+        secondary:
+          "bg-secondary text-secondary-foreground shadow-[0_18px_40px_-24px_rgba(18,40,90,0.5)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-secondary/90 focus-visible:ring-primary/40",
+        ghost: "text-primary hover:bg-primary/10 hover:text-primary focus-visible:ring-primary/40",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-primary text-primary-foreground font-semibold shadow-lg hover:bg-primary/85 hover:shadow-lg transition-smooth",
-        cta: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-custom-md hover:shadow-custom-lg transition-smooth font-semibold",
+        hero:
+          "group relative overflow-hidden rounded-full bg-gradient-to-r from-primary via-accent to-primary/80 text-primary-foreground font-semibold shadow-[0_35px_75px_-35px_rgba(18,40,90,0.7)] transition-all duration-300 hover:-translate-y-0.5 focus-visible:ring-primary/60",
+        cta:
+          "bg-accent text-accent-foreground shadow-[0_22px_55px_-30px_rgba(40,102,210,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent/90 focus-visible:ring-primary/50 font-semibold",
       },
       size: {
         default: "h-10 px-4 py-2",
