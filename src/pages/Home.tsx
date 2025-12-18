@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, Code, Palette, TrendingUp, RefreshCcw } from "lucide-react";
+import { ArrowRight, Sparkles, Code, Palette, TrendingUp, RefreshCcw, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import heroImage from "@/assets/hero-creative.jpg";
@@ -9,7 +9,12 @@ import creativeImg from "@/assets/service-creative.jpg";
 import projectEcommerce from "@/assets/project-ecommerce.jpg";
 import projectMobileApp from "@/assets/project-mobile-app.jpg";
 import projectBranding from "@/assets/project-branding.jpg";
-import { useTrainers } from "@/hooks/useTrainers";
+import { useTeams } from "@/hooks/useTeams";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const services = [
   {
@@ -57,7 +62,7 @@ const pastProjects = [
 ];
 
 export default function Home() {
-  const { trainers, isLoading: trainersLoading, isError: trainersError, error: trainersErrorObj, refetch } = useTrainers();
+  const { teams, isLoading: teamsLoading, isError: teamsError, error: teamsErrorObj, refetch } = useTeams();
 
   return (
     <div className="flex flex-col">
@@ -225,11 +230,11 @@ export default function Home() {
             </p>
           </div>
 
-          {trainersError ? (
+          {teamsError ? (
             <div className="mx-auto max-w-xl rounded-3xl border border-destructive/30 bg-destructive/10 p-8 text-center backdrop-blur-lg">
               <h3 className="text-xl font-semibold text-destructive">Unable to load team roster</h3>
               <p className="mt-2 text-sm text-destructive/80">
-                {trainersErrorObj instanceof Error ? trainersErrorObj.message : "Please try again later."}
+                {teamsErrorObj instanceof Error ? teamsErrorObj.message : "Please try again later."}
               </p>
               <Button variant="outline" size="sm" className="mt-6" onClick={() => refetch()}>
                 <RefreshCcw className="mr-2 h-4 w-4" />
@@ -238,48 +243,93 @@ export default function Home() {
             </div>
           ) : null}
 
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {trainersLoading
-              ? Array.from({ length: 3 }).map((_, index) => (
-                  <div
-                    key={`trainer-skeleton-${index}`}
-                    className="h-80 rounded-[28px] border border-white/10 bg-card/40 backdrop-blur-lg shadow-[0_20px_65px_-45px_rgba(18,40,90,0.55)] animate-pulse"
-                  />
-                ))
-              : trainers.map((trainer, index) => (
-                  <Card
-                    key={trainer.id}
-                    className="group text-center overflow-hidden border-border/50 hover:shadow-custom-lg transition-smooth animate-fade-in"
-                    style={{ animationDelay: `${index * 0.15}s` }}
-                  >
-                    <div className="relative h-80 overflow-hidden">
-                      {trainer.photoUrl ? (
-                        <img
-                          src={trainer.photoUrl}
-                          alt={trainer.name}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 via-accent/15 to-background text-primary text-3xl font-semibold">
-                          {trainer.name.charAt(0)?.toUpperCase()}
-                        </div>
-                      )}
-                      <div className="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-20 transition-smooth" />
-                    </div>
-                    <CardContent className="p-6 space-y-2">
-                      <h3 className="text-xl font-semibold">{trainer.name}</h3>
-                      <p className="text-primary font-medium">
-                        {trainer.expertise ?? "Creative Specialist"}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {trainer.years_of_experience
-                          ? `${trainer.years_of_experience}+ years of experience`
-                          : "Seasoned practitioner from our global network"}
-                      </p>
-                    </CardContent>
-                  </Card>
+          {teamsLoading ? (
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div
+                  key={`team-skeleton-${index}`}
+                  className="h-80 rounded-[28px] border border-white/10 bg-card/40 backdrop-blur-lg shadow-[0_20px_65px_-45px_rgba(18,40,90,0.55)] animate-pulse"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="relative">
+              <Swiper
+                modules={[Navigation, Pagination, Autoplay]}
+                spaceBetween={24}
+                slidesPerView={1}
+                breakpoints={{
+                  640: {
+                    slidesPerView: 2,
+                    spaceBetween: 24,
+                  },
+                  1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 32,
+                  },
+                  1280: {
+                    slidesPerView: 4,
+                    spaceBetween: 32,
+                  },
+                }}
+                navigation={{
+                  nextEl: '.swiper-button-next-teams',
+                  prevEl: '.swiper-button-prev-teams',
+                }}
+                pagination={{
+                  clickable: true,
+                  el: '.swiper-pagination-teams',
+                }}
+                autoplay={{
+                  delay: 3000,
+                  disableOnInteraction: false,
+                }}
+                loop={teams.length > 4}
+                className="!pb-12"
+              >
+                {teams.map((team, index) => (
+                  <SwiperSlide key={team.id}>
+                    <Card className="group text-center overflow-hidden border-border/50 hover:shadow-custom-lg transition-smooth h-full">
+                      <div className="relative h-80 overflow-hidden">
+                        {team.photoUrl ? (
+                          <img
+                            src={team.photoUrl}
+                            alt={team.name}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 via-accent/15 to-background text-primary text-3xl font-semibold">
+                            {team.name.charAt(0)?.toUpperCase()}
+                          </div>
+                        )}
+                        <div className="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-20 transition-smooth" />
+                      </div>
+                      <CardContent className="p-6 space-y-2">
+                        <h3 className="text-xl font-semibold">{team.name}</h3>
+                        <p className="text-primary font-medium">
+                          {team.designation ?? "Creative Specialist"}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {team.years_of_experience
+                            ? `${team.years_of_experience}+ years of experience`
+                            : "Seasoned practitioner from our global network"}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </SwiperSlide>
                 ))}
-          </div>
+              </Swiper>
+              {/* Navigation buttons */}
+              <button className="swiper-button-prev-teams absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 flex items-center justify-center hover:bg-background transition-colors shadow-lg">
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button className="swiper-button-next-teams absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 flex items-center justify-center hover:bg-background transition-colors shadow-lg">
+                <ChevronRight className="w-5 h-5" />
+              </button>
+              {/* Pagination */}
+              <div className="swiper-pagination-teams mt-8 flex justify-center gap-2" />
+            </div>
+          )}
         </div>
       </section>
 

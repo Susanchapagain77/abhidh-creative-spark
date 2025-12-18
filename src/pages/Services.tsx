@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, BarChart, Clock, Layers, RefreshCcw } from "lucide-react";
+import { ArrowRight, BarChart, Clock, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { usePrograms } from "@/hooks/usePrograms";
+import { useServices } from "@/hooks/useServices";
 import { hexToRgba, stripHtml } from "@/lib/utils";
+import { buildAssetUrl } from "@/lib/api";
 
 const deriveHighlights = (description?: string | null) => {
   if (!description) {
@@ -21,8 +22,8 @@ const deriveHighlights = (description?: string | null) => {
 };
 
 export default function Services() {
-  const { programs, isLoading, isError, error, refetch } = usePrograms(9);
-  const hasPrograms = programs.length > 0;
+  const { services, isLoading, isError, error, refetch } = useServices(9);
+  const hasServices = services.length > 0;
 
   return (
     <div className="flex flex-col">
@@ -65,42 +66,64 @@ export default function Services() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-              {(hasPrograms ? programs : []).map((program, index) => {
-                const highlights = deriveHighlights(program.description);
-                const accent = program.accentColor ?? "#1d4ed8";
+              {(hasServices ? services : []).map((service, index) => {
+                const highlights = deriveHighlights(service.description);
+                const accent = service.accentColor ?? "#1d4ed8";
                 const accentLight = hexToRgba(accent, 0.15);
                 const accentBorder = hexToRgba(accent, 0.35);
 
                 return (
                   <Card
-                    key={program.id}
-                    className="group relative overflow-hidden border border-white/10 bg-card/65 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_45px_110px_-55px_rgba(18,40,90,0.7)]"
-                    style={{ animationDelay: `${index * 0.12}s` }}
+                    key={service.id}
+                    className="group relative overflow-hidden border bg-card/65 backdrop-blur-xl transition-all duration-500 shadow-[0_4px_20px_-8px_rgba(18,40,90,0.25)] hover:-translate-y-2 hover:shadow-[0_45px_110px_-55px_rgba(18,40,90,0.7)]"
+                    style={{ 
+                      animationDelay: `${index * 0.12}s`,
+                      borderColor: hexToRgba(accent, 0.15),
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = hexToRgba(accent, 0.4);
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = hexToRgba(accent, 0.15);
+                    }}
                   >
                     <div
-                      className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                      className="absolute inset-0 opacity-0 transition-all duration-500 group-hover:opacity-100"
                       style={{
-                        background: `linear-gradient(150deg, ${hexToRgba(accent, 0.2)}, transparent 60%)`,
+                        background: `linear-gradient(150deg, ${hexToRgba(accent, 0.25)}, ${hexToRgba(accent, 0.1)} 40%, transparent 70%)`,
+                        boxShadow: `inset 0 0 60px ${hexToRgba(accent, 0.15)}`,
                       }}
                     />
                     <CardContent className="relative space-y-6 p-10">
+                      {/* Thumbnail */}
+                      {service.thumbnail_url && (
+                        <div className="relative h-48 w-full overflow-hidden rounded-lg">
+                          <img
+                            src={buildAssetUrl(service.thumbnail_url)}
+                            alt={service.name}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      )}
+
                       <div className="flex flex-wrap items-start justify-between gap-4">
                         <Badge
                           className="border border-white/20 bg-white/10 text-xs font-semibold uppercase tracking-wide text-primary backdrop-blur"
                           style={{ color: accent, borderColor: accentBorder, backgroundColor: accentLight }}
                         >
-                          {program.categoryLabel}
+                          {service.category_label}
                         </Badge>
-                        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-muted-foreground backdrop-blur">
-                          <Layers className="h-3.5 w-3.5 text-primary" />
-                          <span>{program.courses_count ?? 0} offerings</span>
-                        </div>
+                        {service.featured && (
+                          <Badge variant="default" className="text-xs">
+                            Featured
+                          </Badge>
+                        )}
                       </div>
 
                       <div className="space-y-3">
-                        <h2 className="text-3xl font-bold tracking-tight text-foreground">{program.name}</h2>
+                        <h2 className="text-3xl font-bold tracking-tight text-foreground">{service.name}</h2>
                         <p className="text-muted-foreground/90 leading-relaxed">
-                          {stripHtml(program.description) ||
+                          {stripHtml(service.description) ||
                             "Experience a curated mix of strategy, design, and technology tailored to your goals."}
                         </p>
                       </div>
@@ -116,7 +139,7 @@ export default function Services() {
                           <CardContent className="pt-0">
                             <ul className="grid grid-cols-1 gap-3 text-sm text-muted-foreground">
                               {highlights.map((highlight, itemIndex) => (
-                                <li key={`${program.id}-highlight-${itemIndex}`} className="flex items-start gap-2 leading-relaxed">
+                                <li key={`${service.id}-highlight-${itemIndex}`} className="flex items-start gap-2 leading-relaxed">
                                   <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ backgroundColor: accent }} />
                                   {highlight}
                                 </li>
@@ -132,8 +155,8 @@ export default function Services() {
                           <span>
                             Updated{" "}
                             <strong className="text-foreground">
-                              {program.updated_at
-                                ? new Date(program.updated_at).toLocaleDateString(undefined, {
+                              {service.updated_at
+                                ? new Date(service.updated_at).toLocaleDateString(undefined, {
                                     year: "numeric",
                                     month: "short",
                                   })
@@ -141,9 +164,9 @@ export default function Services() {
                             </strong>
                           </span>
                         </div>
-                        <Link to={`/contact?program=${program.id}`}>
+                        <Link to={`/services/${service.slug}`}>
                           <Button variant="hero" size="lg" className="group rounded-full">
-                            Partner with us
+                            Learn More
                             <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                           </Button>
                         </Link>
@@ -153,7 +176,7 @@ export default function Services() {
                 );
               })}
 
-              {!isLoading && !hasPrograms ? (
+              {!isLoading && !hasServices ? (
                 <Card className="border border-dashed border-white/20 bg-card/40 p-10 text-center text-muted-foreground">
                   <CardHeader>
                     <CardTitle className="text-2xl font-semibold text-foreground">Services coming soon</CardTitle>

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const navigation = [
@@ -27,13 +26,12 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/70 backdrop-blur-xl shadow-[0_20px_60px_-35px_rgba(18,40,90,0.55)]">
       <nav className="container mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
-          <Link to="/" className="-m-1.5 p-1.5">
-            <span className="text-2xl font-bold">
-              <span className="bg-gradient-to-r from-primary via-accent to-primary/80 bg-clip-text text-transparent">
-                Abhidh
-              </span>
-              <span className="text-foreground"> Creative</span>
-            </span>
+          <Link to="/" className="-m-1.5 p-1.5 flex items-center">
+            <img 
+              src="/logo.png" 
+              alt="Abhidh Creative Logo" 
+              className="h-14 w-auto object-contain"
+            />
           </Link>
         </div>
         
@@ -48,7 +46,7 @@ export default function Navbar() {
           </button>
         </div>
         
-        <div className="hidden lg:flex lg:gap-x-8">
+        <div className="hidden lg:flex lg:gap-x-8 lg:ml-auto">
           {navigation.map((item) => (
             <Link
               key={item.name}
@@ -66,27 +64,20 @@ export default function Navbar() {
             </Link>
           ))}
         </div>
-        
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link to="/contact">
-            <Button variant="hero" size="default" className="rounded-full">
-              Get Started
-            </Button>
-          </Link>
-        </div>
       </nav>
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden" role="dialog" aria-modal="true">
-          <div className="fixed inset-0 z-50" />
-          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-background px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-border shadow-custom-lg">
-            <div className="flex items-center justify-between">
-              <Link to="/" className="-m-1.5 p-1.5" onClick={() => setMobileMenuOpen(false)}>
-                <span className="text-xl font-bold">
-                  <span className="text-gradient">Abhidh</span>
-                  <span className="text-primary"> Creative</span>
-                </span>
+          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+          <div className="fixed top-0 right-0 bottom-0 z-50 w-full h-screen overflow-y-auto bg-background px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-border shadow-custom-lg">
+            <div className="flex items-center justify-between mb-6">
+              <Link to="/" className="-m-1.5 p-1.5 flex items-center" onClick={() => setMobileMenuOpen(false)}>
+                <img 
+                  src="/logo.png" 
+                  alt="Abhidh Creative Logo" 
+                  className="h-12 w-auto object-contain"
+                />
               </Link>
               <button
                 type="button"
@@ -97,8 +88,8 @@ export default function Navbar() {
                 <X className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-border">
+            <div className="flow-root">
+              <div className="divide-y divide-border">
                 <div className="space-y-2 py-6">
                   {navigation.map((item) => (
                     <Link
@@ -108,20 +99,13 @@ export default function Navbar() {
                       className={cn(
                         "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 transition-smooth",
                         isActive(item.href)
-                          ? "bg-muted text-secondary"
-                          : "text-foreground hover:bg-muted"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-foreground hover:bg-muted/50"
                       )}
                     >
                       {item.name}
                     </Link>
                   ))}
-                </div>
-                <div className="py-6">
-                  <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="hero" size="default" className="w-full rounded-full">
-                      Get Started
-                    </Button>
-                  </Link>
                 </div>
               </div>
             </div>
