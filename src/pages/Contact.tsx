@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,24 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useContactForm } from "@/hooks/useContactForm";
 import { useSearchParams } from "react-router-dom";
-
-const contactInfo = [
-  {
-    icon: Mail,
-    title: "General Inquiries",
-    details: ["info@abidhgroup.com"],
-  },
-  {
-    icon: Phone,
-    title: "Phone",
-    details: ["+977-9841080407", "+977-9801110981"],
-  },
-  {
-    icon: MapPin,
-    title: "Office Location",
-    details: ["Nardevi, Kathmandu, Nepal"],
-  },
-];
 
 export default function Contact() {
   const [searchParams] = useSearchParams();
@@ -38,75 +20,61 @@ export default function Contact() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-secondary py-24 sm:py-32">
-        <div className="container mx-auto px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-secondary-foreground sm:text-6xl mb-6 animate-fade-in">
-            Let's Build the Future Together
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-secondary-foreground/90 animate-fade-in-up">
-            We are here to listen, collaborate, and deliver solutions tailored to your needs
-          </p>
+      <section className="relative overflow-hidden border-b py-20">
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-secondary/20 to-background" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
+        <div className="container relative mx-auto px-4">
+          <div className="mx-auto max-w-3xl space-y-6 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1 text-sm font-semibold text-primary backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              Let&apos;s Build Your Next Digital Solution
+            </div>
+            <h1 className="text-4xl font-bold tracking-tight md:text-5xl">Contact Abhidh Creative</h1>
+            <p className="text-lg text-muted-foreground/90 md:text-xl">
+              Share your vision, and our creative team will help you craft the perfect digital solution for your business.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Contact Information */}
-      <section className="py-24">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-16">
-            {contactInfo.map((info, index) => (
-              <Card
-                key={info.title}
-                className="gradient-card border-border/50 hover:shadow-custom-md transition-smooth animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-lg gradient-accent flex-shrink-0">
-                      <info.icon className="h-6 w-6 text-accent-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">{info.title}</h3>
-                      {info.details.map((detail) => (
-                        <p key={detail} className="text-sm text-muted-foreground">
-                          {detail}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      {/* Contact Form Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-[1fr_0.9fr]">
+            <Card className="border border-white/10 bg-card/70 backdrop-blur">
+              <CardContent className="space-y-6 p-8">
+                <h2 className="text-2xl font-semibold text-foreground">Tell us about your project</h2>
+                <p className="text-sm text-muted-foreground">
+                  Our team typically responds within 24 hours. We&apos;ll schedule a discovery call to understand your goals and
+                  suggest the best solution fit.
+                </p>
 
-          {/* Contact Form */}
-          <div className="max-w-2xl mx-auto">
-            <Card className="shadow-custom-lg border-border/50">
-              <CardContent className="p-8">
-                <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                    <div className="grid gap-4 md:grid-cols-2">
                       <FormField
                         control={form.control}
                         name="name"
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Full Name *</FormLabel>
+                          <FormItem className="space-y-2">
+                            <FormLabel>Full name</FormLabel>
                             <FormControl>
-                              <Input placeholder="John Doe" autoComplete="name" {...field} />
+                              <Input placeholder="Alex Sharma" autoComplete="name" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
+
                       <FormField
                         control={form.control}
                         name="email"
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email Address *</FormLabel>
+                          <FormItem className="space-y-2">
+                            <FormLabel>Work email</FormLabel>
                             <FormControl>
-                              <Input type="email" placeholder="john@example.com" autoComplete="email" {...field} />
+                              <Input type="email" placeholder="you@company.com" autoComplete="email" required {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -114,13 +82,13 @@ export default function Contact() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div className="grid gap-4 md:grid-cols-2">
                       <FormField
                         control={form.control}
                         name="phone"
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
+                          <FormItem className="space-y-2">
+                            <FormLabel>Contact number</FormLabel>
                             <FormControl>
                               <Input placeholder="+977-9800000000" autoComplete="tel" {...field} />
                             </FormControl>
@@ -128,14 +96,15 @@ export default function Contact() {
                           </FormItem>
                         )}
                       />
+
                       <FormField
                         control={form.control}
                         name="subject"
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Subject</FormLabel>
+                          <FormItem className="space-y-2">
+                            <FormLabel>How can we help?</FormLabel>
                             <FormControl>
-                              <Input placeholder="How can we help?" {...field} />
+                              <Input placeholder="Custom website for our business" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -147,13 +116,14 @@ export default function Contact() {
                       control={form.control}
                       name="message"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Message *</FormLabel>
+                        <FormItem className="space-y-2">
+                          <FormLabel>Share details about your project requirements</FormLabel>
                           <FormControl>
                             <Textarea
                               rows={6}
-                              placeholder="Tell us about your project..."
+                              placeholder="Tell us about your business, preferred timeline, expected outcomes, or any specific features you want to focus on."
                               className="resize-y"
+                              required
                               {...field}
                             />
                           </FormControl>
@@ -164,16 +134,51 @@ export default function Contact() {
 
                     <Button
                       type="submit"
-                      variant="hero"
-                      size="lg"
-                      className="group w-full"
+                      className="w-full rounded-full bg-accent px-6 py-6 text-base font-semibold text-accent-foreground hover:bg-accent/90"
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? "Sending..." : "Send Message"}
-                      <Send className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                      {isSubmitting ? "Submitting..." : "Submit request"}
                     </Button>
                   </form>
                 </Form>
+              </CardContent>
+            </Card>
+
+            <Card className="border border-accent/20 bg-gradient-to-br from-primary/10 via-background to-background shadow-xl">
+              <CardContent className="space-y-6 p-8">
+                <h2 className="text-2xl font-semibold text-foreground">Why partner with Abhidh Creative?</h2>
+                <ul className="space-y-4 text-sm text-foreground">
+                  {[
+                    "Customized solutions aligned with your brand",
+                    "Expert designers and developers with industry experience",
+                    "Flexible engagement models (project-based, retainer, hybrid)",
+                    "Post-launch support and maintenance",
+                    "Dedicated project manager for every engagement",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-accent" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-foreground backdrop-blur">
+                  <h3 className="text-lg font-semibold">We&apos;d love to meet you</h3>
+                  <p>
+                    Visit us at <strong>Nardevi, Kathmandu, Nepal</strong> or call us at{" "}
+                    <a href="tel:+9779841080407" className="font-semibold text-primary">
+                      +977-9841080407
+                    </a>
+                    .
+                  </p>
+                  <p>
+                    You can also email us directly at{" "}
+                    <a href="mailto:info@abhidhgroup.com" className="font-semibold text-primary">
+                      info@abhidhgroup.com
+                    </a>
+                    .
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>

@@ -38,9 +38,6 @@ export default function Footer() {
               <MapPin className="mt-0.5 h-5 w-5 flex-shrink-0 text-white/80" />
               <div className="text-sm">
                 <p>Nardevi, Kathmandu, Nepal</p>
-                <p className="mt-1 text-primary-foreground/80">
-                  Training Venue: Jawalakhel, Ekantakuna Marg, Lalitpur
-                </p>
               </div>
             </div>
           </div>
