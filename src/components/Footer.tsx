@@ -1,86 +1,88 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Music, Youtube } from "lucide-react";
 
-const navigation = {
-  company: [
-    { name: "Home", href: "/" },
-    { name: "Services", href: "/services" },
-    { name: "Gallery", href: "/gallery" },
-    { name: "Blogs", href: "/blogs" },
-  ],
-  contact: [
-    { name: "info@abhidh.com", icon: Mail, href: "mailto:info@abhidh.com" },
-    { name: "creative@abhidh.com", icon: Mail, href: "mailto:creative@abhidh.com" },
-    { name: "+977-9841080407", icon: Phone, href: "tel:+9779841080407" },
-    { name: "+977-9801110981", icon: Phone, href: "tel:+9779801110981" },
-  ],
-};
+const links = [
+  { label: "Home", href: "/" },
+  { label: "Services", href: "/services" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Blogs", href: "/blogs" },
+  { label: "Contact", href: "/contact" },
+];
+
+const socials = [
+  { icon: Facebook, href: "https://www.facebook.com/abhidhgroup/", label: "Facebook" },
+  { icon: Instagram, href: "https://www.instagram.com/abhidhgroup/", label: "Instagram" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/abhidhacademy", label: "LinkedIn" },
+  { icon: Youtube, href: "https://www.youtube.com/@AbhidhGroup", label: "YouTube" },
+  { icon: Music, href: "https://www.tiktok.com/@abhidh.group", label: "TikTok" },
+];
 
 export default function Footer() {
+  const year = new Date().getFullYear();
   return (
-    <footer className="relative overflow-hidden bg-gradient-to-br from-primary via-accent to-primary/80 text-primary-foreground" aria-labelledby="footer-heading">
-      <h2 id="footer-heading" className="sr-only">
-        Footer
-      </h2>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.25),transparent_55%)]" />
-      <div className="container relative mx-auto px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
-        <div className="xl:grid xl:grid-cols-3 xl:gap-8">
-          <div className="space-y-8">
-            <span className="text-2xl font-bold">
-              <span className="text-white">Abhidh</span>
-              <span className="text-primary-foreground/90"> Creative</span>
-            </span>
-            <p className="text-sm leading-6 text-primary-foreground/80">
-              Where creativity meets strategy, and innovation meets technology. 
-              Building digital solutions that drive meaningful growth.
+    <footer className="mt-20 border-t border-white/10 bg-gradient-to-br from-background via-primary/5 to-background">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid gap-10 md:grid-cols-3">
+          <div className="space-y-4">
+            <h3 className="text-2xl font-bold text-foreground">
+              ABHIDH <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">CREATIVE</span>
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Where creativity meets strategy, and innovation meets technology. Building digital solutions that drive meaningful growth.
             </p>
-            <div className="flex items-start gap-2">
-              <MapPin className="mt-0.5 h-5 w-5 flex-shrink-0 text-white/80" />
-              <div className="text-sm">
-                <p>Nardevi, Kathmandu, Nepal</p>
-              </div>
+            <div className="flex items-center gap-4 text-muted-foreground">
+              {socials.map(({ icon: Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  className="rounded-full border border-white/10 bg-white/5 p-2 transition hover:border-accent/50 hover:text-accent"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
             </div>
           </div>
-          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
-            <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3 className="text-sm font-semibold leading-6">Company</h3>
-                <ul role="list" className="mt-6 space-y-4">
-                  {navigation.company.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        to={item.href}
-                        className="text-sm leading-6 text-primary-foreground/80 transition-colors hover:text-white"
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-10 md:mt-0">
-                <h3 className="text-sm font-semibold leading-6">Contact Us</h3>
-                <ul role="list" className="mt-6 space-y-4">
-                  {navigation.contact.map((item) => (
-                    <li key={item.name}>
-                      <a
-                        href={item.href}
-                        className="flex items-center gap-2 text-sm leading-6 text-primary-foreground/80 transition-colors hover:text-white"
-                      >
-                        <item.icon className="h-4 w-4" />
-                        {item.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+
+          <div>
+            <h4 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Explore</h4>
+            <ul className="mt-4 space-y-2 text-sm text-foreground/80">
+              {links.map((link) => (
+                <li key={link.href}>
+                  <Link to={link.href} className="transition hover:text-accent">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Contact Us</h4>
+            <p className="mt-4 text-sm text-foreground/80">
+              Nardevi, Kathmandu, Nepal
+              <br />
+              info@abhidhgroup.com
+              <br />
+              creative@abhidh.com
+              <br />
+              +977-9841080407
+            </p>
           </div>
         </div>
-        <div className="mt-16 border-t border-primary-foreground/10 pt-8 sm:mt-20 lg:mt-24">
-          <p className="text-xs leading-5 text-primary-foreground/60 text-center">
-            &copy; {new Date().getFullYear()} Abhidh Creative. All rights reserved.
-          </p>
+
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-muted-foreground md:flex-row">
+          <p>© {year} Abhidh Creative. All rights reserved.</p>
+          <div className="flex items-center gap-4">
+            <Link to="/privacy" className="transition hover:text-accent">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="transition hover:text-accent">
+              Terms of Service
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
