@@ -33,7 +33,7 @@ export default function Contact() {
             <h1 className="text-4xl font-bold tracking-tight md:text-5xl">Contact Abhidh Creative</h1>
             <p className="text-lg text-muted-foreground/90 md:text-xl">
               Share your vision, and our creative team will help you craft the perfect digital solution for your business.
-            </p>
+          </p>
           </div>
         </div>
       </section>
