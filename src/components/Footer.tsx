@@ -46,18 +46,18 @@ export default function Footer() {
             </div>
           </div>
 
-              <div>
+          <div>
             <h4 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Explore</h4>
             <ul className="mt-4 space-y-2 text-sm text-foreground/80">
               {links.map((link) => (
                 <li key={link.href}>
                   <Link to={link.href} className="transition hover:text-accent">
                     {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Contact Us</h4>
@@ -68,7 +68,7 @@ export default function Footer() {
               <br />
               creative@abhidh.com
               <br />
-              +977-9841080407
+              +977-9801110981
             </p>
           </div>
         </div>

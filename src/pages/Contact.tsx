@@ -33,7 +33,7 @@ export default function Contact() {
             <h1 className="text-4xl font-bold tracking-tight md:text-5xl">Contact Abhidh Creative</h1>
             <p className="text-lg text-muted-foreground/90 md:text-xl">
               Share your vision, and our creative team will help you craft the perfect digital solution for your business.
-          </p>
+            </p>
           </div>
         </div>
       </section>
@@ -166,8 +166,8 @@ export default function Contact() {
                   <h3 className="text-lg font-semibold">We&apos;d love to meet you</h3>
                   <p>
                     Visit us at <strong>Nardevi, Kathmandu, Nepal</strong> or call us at{" "}
-                    <a href="tel:+9779841080407" className="font-semibold text-primary">
-                      +977-9841080407
+                    <a href="tel:+9779801110981" className="font-semibold text-primary">
+                      +977-9801110981
                     </a>
                     .
                   </p>
