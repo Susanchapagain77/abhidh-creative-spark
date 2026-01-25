@@ -68,13 +68,13 @@ export default function Footer() {
               <br />
               creative@abhidh.com
               <br />
-              +977-9801110981
+              +977-9801110981 / +977-9841080407
             </p>
           </div>
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-muted-foreground md:flex-row">
-          <p>© {year} Abhidh Creative. All rights reserved.</p>
+          <p>© {year} Abhidh Group. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link to="/privacy" className="transition hover:text-accent">
               Privacy Policy
