@@ -4,7 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchFromApi, PaginatedResponse, buildAssetUrl } from "@/lib/api";
 import { stripHtml, cn } from "@/lib/utils";
-import { Play, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { Play, ExternalLink, Image as ImageIcon, X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type GalleryPhoto = {
   id: number;
@@ -53,6 +58,11 @@ const getYouTubeThumbnail = (url: string | null) => {
 
 export default function Gallery() {
   const [activeFilter, setActiveFilter] = useState("all");
+  const [lightbox, setLightbox] = useState<{ isOpen: boolean; photos: GalleryPhoto[]; activeIndex: number }>({
+    isOpen: false,
+    photos: [],
+    activeIndex: 0,
+  });
 
   const { data, isLoading, isError, error, refetch } = useQuery<PaginatedResponse<GalleryItem>>({
     queryKey: ["creative-gallery"],
@@ -79,6 +89,26 @@ export default function Gallery() {
     activeFilter === "all"
       ? galleries
       : galleries.filter((gallery) => (gallery.option ?? "highlights") === activeFilter);
+
+  const openLightbox = (photos: GalleryPhoto[], index: number) => {
+    setLightbox({ isOpen: true, photos, activeIndex: index });
+  };
+
+  const nextPhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLightbox(prev => ({
+      ...prev,
+      activeIndex: (prev.activeIndex + 1) % prev.photos.length
+    }));
+  };
+
+  const prevPhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLightbox(prev => ({
+      ...prev,
+      activeIndex: (prev.activeIndex - 1 + prev.photos.length) % prev.photos.length
+    }));
+  };
 
   return (
     <div className="flex flex-col">
@@ -153,18 +183,19 @@ export default function Gallery() {
                 return (
                   <Card
                     key={gallery.id}
-                    className={cn(
-                      "group flex flex-col overflow-hidden border-white/10 bg-card/60 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_100px_-50px_rgba(18,40,90,0.65)] animate-fade-in",
-                      isVideo && "cursor-pointer"
-                    )}
+                    className="group flex flex-col overflow-hidden border-white/10 bg-card/60 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_100px_-50px_rgba(18,40,90,0.65)] animate-fade-in"
                     style={{ animationDelay: `${index * 0.1}s` }}
-                    onClick={() => {
-                      if (isVideo && gallery.youtube_url) {
-                        window.open(gallery.youtube_url, "_blank");
-                      }
-                    }}
                   >
-                    <div className="relative aspect-video overflow-hidden">
+                    <div 
+                      className="relative aspect-video overflow-hidden cursor-pointer"
+                      onClick={() => {
+                        if (isVideo && gallery.youtube_url) {
+                          window.open(gallery.youtube_url, "_blank");
+                        } else if (gallery.photos?.length) {
+                          openLightbox(gallery.photos, 0);
+                        }
+                      }}
+                    >
                       {coverUrl ? (
                         <img
                           src={coverUrl}
@@ -180,8 +211,17 @@ export default function Gallery() {
                       {/* Video Overlay */}
                       {isVideo && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors duration-500">
-                          <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 group-hover:scale-110 group-hover:bg-primary transition-all duration-500">
+                          <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 group-hover:scale-110 group-hover:bg-primary transition-all duration-500 shadow-xl">
                             <Play className="h-6 w-6 text-white fill-white" />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Image Overlay */}
+                      {!isVideo && gallery.photos?.length > 0 && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                           <div className="h-12 w-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 scale-90 group-hover:scale-100 transition-transform duration-500">
+                            <Maximize2 className="h-5 w-5 text-white" />
                           </div>
                         </div>
                       )}
@@ -189,7 +229,7 @@ export default function Gallery() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
                       
                       <div className="absolute top-4 right-4 z-10">
-                        <div className="flex items-center gap-2 rounded-full border border-white/20 bg-background/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary backdrop-blur">
+                        <div className="flex items-center gap-2 rounded-full border border-white/20 bg-background/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary backdrop-blur shadow-sm">
                           {isVideo ? <Play className="h-3 w-3" /> : <ImageIcon className="h-3 w-3" />}
                           {categoryLabel}
                         </div>
@@ -197,56 +237,83 @@ export default function Gallery() {
                     </div>
 
                     <CardContent className="flex flex-1 flex-col p-8">
-                      <div className="flex-1 space-y-4">
-                        <div className="space-y-2">
+                      <div className="flex-1 space-y-5">
+                        <div className="space-y-3">
                           <div className="flex items-center justify-between gap-2">
-                             <h3 className="text-xl font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                             <h3 className="text-2xl font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors tracking-tight">
                               {gallery.title}
                             </h3>
-                            {isVideo && <ExternalLink className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />}
+                            {isVideo && (
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(gallery.youtube_url!, "_blank");
+                                }}
+                                className="text-primary hover:scale-110 transition-transform"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </button>
+                            )}
                           </div>
-                          <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
+                          <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3 font-medium opacity-80">
                             {stripHtml(gallery.description) ||
                               "Visual moments that highlight our creative process and outcomes for clients."}
                           </p>
                         </div>
 
-                        {gallery.photos?.length > 1 && !isVideo && (
-                          <div className="flex items-center gap-2 pt-2">
-                            {gallery.photos.slice(1, 5).map((photo) => (
-                              <div key={photo.id} className="relative h-10 w-10 overflow-hidden rounded-lg border border-white/10">
+                        {gallery.photos?.length > 1 && (
+                          <div className="flex items-center gap-2.5 pt-2">
+                            {gallery.photos.slice(1, 5).map((photo, pIdx) => (
+                              <div 
+                                key={photo.id} 
+                                className="relative h-12 w-12 overflow-hidden rounded-xl border border-white/10 cursor-zoom-in transition-all hover:scale-105 hover:border-primary/50 group/thumb"
+                                onClick={() => openLightbox(gallery.photos, pIdx + 1)}
+                              >
                                 <img
                                   src={buildAssetUrl(photo.photo_path)}
-                                  className="h-full w-full object-cover opacity-60 hover:opacity-100 transition-opacity"
+                                  className="h-full w-full object-cover opacity-70 group-hover/thumb:opacity-100 transition-opacity"
                                   alt="Thumbnail"
                                 />
                               </div>
                             ))}
                             {gallery.photos.length > 5 && (
-                              <div className="text-[10px] font-medium text-muted-foreground ml-1">
-                                +{gallery.photos.length - 5} more
-                              </div>
+                              <button 
+                                onClick={() => openLightbox(gallery.photos, 5)}
+                                className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-[10px] font-bold text-muted-foreground hover:bg-white/10 hover:text-primary transition-all"
+                              >
+                                +{gallery.photos.length - 5}
+                              </button>
                             )}
                           </div>
                         )}
                       </div>
 
-                      <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-6">
-                        <div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
-                          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                          <span>
+                      <div className="mt-8 flex items-center justify-between border-t border-white/10 pt-6">
+                        <div className="flex items-center gap-2.5 text-[11px] font-semibold text-muted-foreground">
+                          <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                          <span className="uppercase tracking-wider">
                             {gallery.created_at
                               ? new Date(gallery.created_at).toLocaleDateString(undefined, {
                                   month: "short",
                                   day: "numeric",
                                   year: "numeric",
                                 })
-                              : "Recently Uploaded"}
+                              : "Recent"}
                           </span>
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60">
-                          Portfolio
-                        </span>
+                        <div className="flex items-center gap-4">
+                           {!isVideo && gallery.photos?.length > 0 && (
+                            <button 
+                              onClick={() => openLightbox(gallery.photos, 0)}
+                              className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline underline-offset-4"
+                            >
+                              View Gallery
+                            </button>
+                          )}
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">
+                            Portfolio
+                          </span>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -256,16 +323,68 @@ export default function Gallery() {
           )}
 
           {!isLoading && !filteredGalleries.length && !isError ? (
-            <div className="mt-16 text-center py-20 rounded-3xl border border-dashed border-white/10">
+            <div className="mt-16 text-center py-20 rounded-3xl border border-dashed border-white/10 bg-white/5">
               <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground/20 mb-4" />
-              <p className="text-muted-foreground font-medium">No items found in this category.</p>
+              <p className="text-muted-foreground font-medium">No portfolio items found in this category.</p>
               <Button variant="link" className="mt-2 text-primary" onClick={() => setActiveFilter("all")}>
-                Clear filters
+                Reset all filters
               </Button>
             </div>
           ) : null}
         </div>
       </section>
+
+      {/* Lightbox Modal */}
+      <Dialog 
+        open={lightbox.isOpen} 
+        onOpenChange={(open) => setLightbox(prev => ({ ...prev, isOpen: open }))}
+      >
+        <DialogContent className="max-w-[95vw] h-[90vh] p-0 border-none bg-black/95 backdrop-blur-2xl shadow-2xl flex flex-col items-center justify-center overflow-hidden gap-0">
+          <DialogTitle className="sr-only">Image Gallery View</DialogTitle>
+          
+          <button 
+            className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            onClick={() => setLightbox(prev => ({ ...prev, isOpen: false }))}
+          >
+            <X className="h-6 w-6" />
+          </button>
+
+          {lightbox.photos.length > 1 && (
+            <>
+              <button 
+                className="absolute left-4 z-50 p-3 rounded-full bg-white/5 hover:bg-white/15 text-white transition-all hover:scale-110 active:scale-95"
+                onClick={prevPhoto}
+              >
+                <ChevronLeft className="h-8 w-8" />
+              </button>
+              <button 
+                className="absolute right-4 z-50 p-3 rounded-full bg-white/5 hover:bg-white/15 text-white transition-all hover:scale-110 active:scale-95"
+                onClick={nextPhoto}
+              >
+                <ChevronRight className="h-8 w-8" />
+              </button>
+            </>
+          )}
+
+          <div className="relative w-full h-full flex items-center justify-center p-4 sm:p-8">
+            <img 
+              src={buildAssetUrl(lightbox.photos[lightbox.activeIndex]?.photo_path)}
+              alt={lightbox.photos[lightbox.activeIndex]?.caption || "Gallery view"}
+              className="max-w-full max-h-full object-contain shadow-2xl animate-in zoom-in-95 duration-300 select-none"
+            />
+            
+            {lightbox.photos[lightbox.activeIndex]?.caption && (
+              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 text-white text-sm font-medium shadow-2xl">
+                {lightbox.photos[lightbox.activeIndex].caption}
+              </div>
+            )}
+
+            <div className="absolute bottom-4 right-8 text-white/40 text-xs font-mono tracking-widest uppercase">
+              {lightbox.activeIndex + 1} / {lightbox.photos.length}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
