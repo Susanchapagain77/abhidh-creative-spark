@@ -22,11 +22,15 @@ export default function Navbar() {
     return location.pathname.startsWith(href);
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/70 backdrop-blur-xl shadow-[0_20px_60px_-35px_rgba(18,40,90,0.55)]">
       <nav className="container mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
-          <Link to="/" className="-m-1.5 p-1.5 flex items-center">
+          <Link to="/" className="-m-1.5 p-1.5 flex items-center" onClick={scrollToTop}>
             <img 
               src="/logo.png" 
               alt="Abhidh Creative Logo" 
@@ -72,7 +76,14 @@ export default function Navbar() {
           <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
           <div className="fixed top-0 right-0 bottom-0 z-50 w-full h-screen overflow-y-auto bg-background px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-border shadow-custom-lg">
             <div className="flex items-center justify-between mb-6">
-              <Link to="/" className="-m-1.5 p-1.5 flex items-center" onClick={() => setMobileMenuOpen(false)}>
+              <Link
+                to="/"
+                className="-m-1.5 p-1.5 flex items-center"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  scrollToTop();
+                }}
+              >
                 <img 
                   src="/logo.png" 
                   alt="Abhidh Creative Logo" 

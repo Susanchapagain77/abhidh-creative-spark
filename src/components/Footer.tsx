@@ -10,11 +10,11 @@ const links = [
 ];
 
 const socials = [
-  { icon: Facebook, href: "https://www.facebook.com/abhidhgroup/", label: "Facebook" },
-  { icon: Instagram, href: "https://www.instagram.com/abhidhgroup/", label: "Instagram" },
-  { icon: Linkedin, href: "https://www.linkedin.com/company/abhidhacademy", label: "LinkedIn" },
-  { icon: Youtube, href: "https://www.youtube.com/@AbhidhGroup", label: "YouTube" },
-  { icon: Music, href: "https://www.tiktok.com/@abhidh.group", label: "TikTok" },
+  { icon: Facebook, href: "https://www.facebook.com/abhidhcreative02", label: "Facebook" },
+  { icon: Instagram, href: "https://www.instagram.com/abhidhcreative/", label: "Instagram" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/abhidh-creative/", label: "LinkedIn" },
+  { icon: Youtube, href: "https://www.youtube.com/@AbhidhCreative", label: "YouTube" },
+  { icon: Music, href: "https://www.tiktok.com/@abhidhcreative", label: "TikTok" },
 ];
 
 export default function Footer() {
