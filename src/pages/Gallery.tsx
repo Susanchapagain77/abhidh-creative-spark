@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchFromApi, PaginatedResponse, buildAssetUrl } from "@/lib/api";
@@ -35,6 +36,9 @@ const optionLabels: Record<string, string> = {
   success: "Success Stories",
   workshop: "Workshops",
   virtual: "Virtual Sessions",
+  digital_marketing: "Digital Marketing",
+  it_development: "IT & Development",
+  creative_solutions: "Creative Solutions",
 };
 
 const formatOption = (value: string | null | undefined) => {
@@ -57,7 +61,15 @@ const getYouTubeThumbnail = (url: string | null) => {
 };
 
 export default function Gallery() {
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [searchParams] = useSearchParams();
+  const filterParam = searchParams.get("filter") || "all";
+  const [activeFilter, setActiveFilter] = useState(filterParam);
+
+  // Sync activeFilter when search param changes
+  useEffect(() => {
+    setActiveFilter(filterParam);
+  }, [filterParam]);
+
   const [lightbox, setLightbox] = useState<{ isOpen: boolean; photos: GalleryPhoto[]; activeIndex: number }>({
     isOpen: false,
     photos: [],
