@@ -22,21 +22,21 @@ const services = [
     description: "End-to-end digital marketing solutions from social media campaigns to SEO strategies that improve rankings and deliver measurable results.",
     image: digitalMarketingImg,
     icon: TrendingUp,
-    link: "/gallery?filter=digital_marketing",
+    link: "/services?category=digital_marketing",
   },
   {
     title: "IT & Development",
     description: "Website design, mobile apps, e-commerce platforms, and custom software solutions with user-friendly design and robust functionality.",
     image: developmentImg,
     icon: Code,
-    link: "/gallery?filter=it_development",
+    link: "/services?category=it_development",
   },
   {
     title: "Creative Solutions",
     description: "Branding, graphic design, multimedia production, and campaign strategy that crafts unique, professional, and memorable brand identities.",
     image: creativeImg,
     icon: Palette,
-    link: "/gallery?filter=creative_solutions",
+    link: "/services?category=creative_solutions",
   },
 ];
 

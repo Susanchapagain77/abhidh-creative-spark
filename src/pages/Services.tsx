@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
-import { ArrowRight, BarChart, Clock, RefreshCcw } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { ArrowRight, BarChart, Clock, RefreshCcw, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useServices } from "@/hooks/useServices";
-import { hexToRgba, stripHtml } from "@/lib/utils";
+import { hexToRgba, stripHtml, cn } from "@/lib/utils";
 import { buildAssetUrl } from "@/lib/api";
 
 const deriveHighlights = (description?: string | null) => {
@@ -21,9 +21,28 @@ const deriveHighlights = (description?: string | null) => {
   return splits.slice(0, 4);
 };
 
+const categories = [
+  { id: "all", label: "All Services" },
+  { id: "digital_marketing", label: "Digital Marketing" },
+  { id: "it_development", label: "IT & Development" },
+  { id: "creative_solutions", label: "Creative Solutions" },
+];
+
 export default function Services() {
-  const { services, isLoading, isError, error, refetch } = useServices(9);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryFilter = searchParams.get("category") || "all";
+
+  const { services, isLoading, isError, error, refetch } = useServices(20, categoryFilter);
   const hasServices = services.length > 0;
+
+  const handleCategoryChange = (id: string) => {
+    if (id === "all") {
+      searchParams.delete("category");
+    } else {
+      searchParams.set("category", id);
+    }
+    setSearchParams(searchParams);
+  };
 
   return (
     <div className="flex flex-col">
@@ -36,6 +55,28 @@ export default function Services() {
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-secondary-foreground/90 animate-fade-in-up">
             Comprehensive digital solutions tailored to help your business thrive in today's competitive landscape
           </p>
+        </div>
+      </section>
+
+      {/* Filter Bar */}
+      <section className="border-b py-8 sticky top-0 z-20 bg-background/95 backdrop-blur-md">
+        <div className="container mx-auto px-6 lg:px-8">
+          <div className="flex flex-wrap justify-center gap-3">
+            {categories.map((cat) => (
+              <Button
+                key={cat.id}
+                variant={categoryFilter === cat.id ? "hero" : "outline"}
+                size="sm"
+                className={cn(
+                  "rounded-full px-6 transition-all duration-300",
+                  categoryFilter === cat.id ? "shadow-lg shadow-primary/20 scale-105" : "hover:bg-primary/5"
+                )}
+                onClick={() => handleCategoryChange(cat.id)}
+              >
+                {cat.label}
+              </Button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -75,7 +116,7 @@ export default function Services() {
                 return (
                   <Card
                     key={service.id}
-                    className="group relative overflow-hidden border bg-card/65 backdrop-blur-xl transition-all duration-500 shadow-[0_4px_20px_-8px_rgba(18,40,90,0.25)] hover:-translate-y-2 hover:shadow-[0_45px_110px_-55px_rgba(18,40,90,0.7)]"
+                    className="group relative overflow-hidden border bg-card/65 backdrop-blur-xl transition-all duration-500 shadow-[0_4px_20px_-8px_rgba(18,40,90,0.25)] hover:-translate-y-2 hover:shadow-[0_45px_110px_-55px_rgba(18,40,90,0.7)] animate-fade-in"
                     style={{ 
                       animationDelay: `${index * 0.12}s`,
                       borderColor: hexToRgba(accent, 0.15),
@@ -97,11 +138,11 @@ export default function Services() {
                     <CardContent className="relative space-y-6 p-10">
                       {/* Thumbnail */}
                       {service.thumbnail_url && (
-                        <div className="relative h-48 w-full overflow-hidden rounded-lg">
+                        <div className="relative h-48 w-full overflow-hidden rounded-lg border border-white/5">
                           <img
                             src={buildAssetUrl(service.thumbnail_url)}
                             alt={service.name}
-                            className="h-full w-full object-cover"
+                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                           />
                         </div>
                       )}
@@ -121,8 +162,8 @@ export default function Services() {
                       </div>
 
                       <div className="space-y-3">
-                        <h2 className="text-3xl font-bold tracking-tight text-foreground">{service.name}</h2>
-                        <p className="text-muted-foreground/90 leading-relaxed">
+                        <h2 className="text-3xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">{service.name}</h2>
+                        <p className="text-muted-foreground/90 leading-relaxed font-medium">
                           {stripHtml(service.description) ||
                             "Experience a curated mix of strategy, design, and technology tailored to your goals."}
                         </p>
@@ -149,7 +190,7 @@ export default function Services() {
                         </Card>
                       ) : null}
 
-                      <div className="flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/5">
                         <div className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground/80">
                           <Clock className="h-4 w-4 text-primary" />
                           <span>
@@ -165,8 +206,8 @@ export default function Services() {
                           </span>
                         </div>
                         <Link to={`/services/${service.slug}`}>
-                          <Button variant="hero" size="lg" className="group rounded-full">
-                            Learn More
+                          <Button variant="hero" size="lg" className="group rounded-full px-8 shadow-lg shadow-primary/20">
+                            Explore Service
                             <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                           </Button>
                         </Link>
@@ -177,23 +218,14 @@ export default function Services() {
               })}
 
               {!isLoading && !hasServices ? (
-                <Card className="border border-dashed border-white/20 bg-card/40 p-10 text-center text-muted-foreground">
-                  <CardHeader>
-                    <CardTitle className="text-2xl font-semibold text-foreground">Services coming soon</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p>
-                      We are curating new creative and technology programs for our partners. Let us know what you need and we&apos;ll build it
-                      together.
-                    </p>
-                    <Link to="/contact">
-                      <Button variant="secondary">
-                        Start a conversation
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
+                <div className="lg:col-span-2 py-20 text-center border border-dashed border-white/10 rounded-3xl bg-white/5 animate-fade-in">
+                  <Layers className="h-12 w-12 mx-auto text-muted-foreground/20 mb-4" />
+                  <h3 className="text-xl font-semibold text-foreground">No services found in this category</h3>
+                  <p className="mt-2 text-muted-foreground">Please check back soon or reset the filters to see all services.</p>
+                  <Button variant="link" className="mt-4 text-primary" onClick={() => handleCategoryChange("all")}>
+                    Reset Filters
+                  </Button>
+                </div>
               ) : null}
             </div>
           )}
