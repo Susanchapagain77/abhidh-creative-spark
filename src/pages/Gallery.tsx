@@ -70,10 +70,18 @@ export default function Gallery() {
     setActiveFilter(filterParam);
   }, [filterParam]);
 
-  const [lightbox, setLightbox] = useState<{ isOpen: boolean; photos: GalleryPhoto[]; activeIndex: number }>({
+  const [lightbox, setLightbox] = useState<{ 
+    isOpen: boolean; 
+    photos: GalleryPhoto[]; 
+    activeIndex: number;
+    isVideo: boolean;
+    youtubeUrl: string | null;
+  }>({
     isOpen: false,
     photos: [],
     activeIndex: 0,
+    isVideo: false,
+    youtubeUrl: null,
   });
 
   const { data, isLoading, isError, error, refetch } = useQuery<PaginatedResponse<GalleryItem>>({
@@ -102,8 +110,8 @@ export default function Gallery() {
       ? galleries
       : galleries.filter((gallery) => (gallery.option ?? "highlights") === activeFilter);
 
-  const openLightbox = (photos: GalleryPhoto[], index: number) => {
-    setLightbox({ isOpen: true, photos, activeIndex: index });
+  const openLightbox = (photos: GalleryPhoto[], index: number, isVideo = false, youtubeUrl: string | null = null) => {
+    setLightbox({ isOpen: true, photos, activeIndex: index, isVideo, youtubeUrl });
   };
 
   const nextPhoto = (e: React.MouseEvent) => {
@@ -202,7 +210,7 @@ export default function Gallery() {
                       className="relative aspect-video overflow-hidden cursor-pointer"
                       onClick={() => {
                         if (isVideo && gallery.youtube_url) {
-                          window.open(gallery.youtube_url, "_blank");
+                          openLightbox([], 0, true, gallery.youtube_url);
                         } else if (gallery.photos?.length) {
                           openLightbox(gallery.photos, 0);
                         }
@@ -259,7 +267,7 @@ export default function Gallery() {
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  window.open(gallery.youtube_url!, "_blank");
+                                  openLightbox([], 0, true, gallery.youtube_url);
                                 }}
                                 className="text-primary hover:scale-110 transition-transform"
                               >
@@ -314,7 +322,15 @@ export default function Gallery() {
                           </span>
                         </div>
                         <div className="flex items-center gap-4">
-                           {!isVideo && gallery.photos?.length > 0 && (
+                           {isVideo ? (
+                             <button 
+                              onClick={() => openLightbox([], 0, true, gallery.youtube_url)}
+                              className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline underline-offset-4 flex items-center gap-1"
+                            >
+                              <Play className="h-2 w-2 fill-primary" />
+                              Play Video
+                            </button>
+                           ) : gallery.photos?.length > 0 && (
                             <button 
                               onClick={() => openLightbox(gallery.photos, 0)}
                               className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline underline-offset-4"
@@ -351,8 +367,11 @@ export default function Gallery() {
         open={lightbox.isOpen} 
         onOpenChange={(open) => setLightbox(prev => ({ ...prev, isOpen: open }))}
       >
-        <DialogContent className="max-w-[95vw] h-[90vh] p-0 border-none bg-black/95 backdrop-blur-2xl shadow-2xl flex flex-col items-center justify-center overflow-hidden gap-0">
-          <DialogTitle className="sr-only">Image Gallery View</DialogTitle>
+        <DialogContent className={cn(
+          "max-w-[95vw] h-[90vh] p-0 border-none bg-black/95 backdrop-blur-2xl shadow-2xl flex flex-col items-center justify-center overflow-hidden gap-0",
+          lightbox.isVideo && "aspect-video h-auto max-h-[90vh]"
+        )}>
+          <DialogTitle className="sr-only">{lightbox.isVideo ? "Video Player" : "Image Gallery View"}</DialogTitle>
           
           <button 
             className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
@@ -361,7 +380,7 @@ export default function Gallery() {
             <X className="h-6 w-6" />
           </button>
 
-          {lightbox.photos.length > 1 && (
+          {!lightbox.isVideo && lightbox.photos.length > 1 && (
             <>
               <button 
                 className="absolute left-4 z-50 p-3 rounded-full bg-white/5 hover:bg-white/15 text-white transition-all hover:scale-110 active:scale-95"
@@ -379,21 +398,34 @@ export default function Gallery() {
           )}
 
           <div className="relative w-full h-full flex items-center justify-center p-4 sm:p-8">
-            <img 
-              src={buildAssetUrl(lightbox.photos[lightbox.activeIndex]?.photo_path)}
-              alt={lightbox.photos[lightbox.activeIndex]?.caption || "Gallery view"}
-              className="max-w-full max-h-full object-contain shadow-2xl animate-in zoom-in-95 duration-300 select-none"
-            />
-            
-            {lightbox.photos[lightbox.activeIndex]?.caption && (
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 text-white text-sm font-medium shadow-2xl">
-                {lightbox.photos[lightbox.activeIndex].caption}
+            {lightbox.isVideo ? (
+              <div className="w-full h-full aspect-video">
+                <iframe
+                  src={`https://www.youtube.com/embed/${getYouTubeId(lightbox.youtubeUrl)}?autoplay=1`}
+                  className="w-full h-full rounded-xl border border-white/10 shadow-2xl"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
               </div>
-            )}
+            ) : (
+              <>
+                <img 
+                  src={buildAssetUrl(lightbox.photos[lightbox.activeIndex]?.photo_path)}
+                  alt={lightbox.photos[lightbox.activeIndex]?.caption || "Gallery view"}
+                  className="max-w-full max-h-full object-contain shadow-2xl animate-in zoom-in-95 duration-300 select-none"
+                />
+                
+                {lightbox.photos[lightbox.activeIndex]?.caption && (
+                  <div className="absolute bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 text-white text-sm font-medium shadow-2xl">
+                    {lightbox.photos[lightbox.activeIndex].caption}
+                  </div>
+                )}
 
-            <div className="absolute bottom-4 right-8 text-white/40 text-xs font-mono tracking-widest uppercase">
-              {lightbox.activeIndex + 1} / {lightbox.photos.length}
-            </div>
+                <div className="absolute bottom-4 right-8 text-white/40 text-xs font-mono tracking-widest uppercase">
+                  {lightbox.activeIndex + 1} / {lightbox.photos.length}
+                </div>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
