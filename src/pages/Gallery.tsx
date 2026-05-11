@@ -23,7 +23,7 @@ type GalleryItem = {
   title: string;
   description: string | null;
   option: string | null;
-  media_type: "image" | "video";
+  media_type: "image_group" | "youtube";
   youtube_url: string | null;
   photos: GalleryPhoto[];
   created_at?: string;
@@ -86,7 +86,7 @@ export default function Gallery() {
 
   const { data, isLoading, isError, error, refetch } = useQuery<PaginatedResponse<GalleryItem>>({
     queryKey: ["creative-gallery"],
-    queryFn: () => fetchFromApi<PaginatedResponse<GalleryItem>>("/galleries?per_page=30"),
+    queryFn: () => fetchFromApi<PaginatedResponse<GalleryItem>>("/galleries?option=Abhidh%20Creative&per_page=50"),
   });
 
   const galleries = data?.data ?? [];
@@ -192,7 +192,7 @@ export default function Gallery() {
           ) : (
             <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
               {filteredGalleries.map((gallery, index) => {
-                const isVideo = gallery.media_type === "video" || !!gallery.youtube_url;
+                const isVideo = gallery.media_type === "youtube" || !!gallery.youtube_url;
                 const coverPhoto = gallery.photos?.[0];
                 const coverUrl = isVideo 
                   ? (getYouTubeThumbnail(gallery.youtube_url) || buildAssetUrl(coverPhoto?.photo_path))
