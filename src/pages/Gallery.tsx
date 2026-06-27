@@ -50,9 +50,9 @@ const formatOption = (value: string | null | undefined) => {
 
 const getYouTubeId = (url: string | null) => {
   if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const regExp = /(?:youtu\.be\/|\/(?:embed|v|shorts)\/|u\/\w\/|watch\?v=|&v=)([A-Za-z0-9_-]{11})/;
   const match = url.match(regExp);
-  return match && match[2].length === 11 ? match[2] : null;
+  return match ? match[1] : null;
 };
 
 const getYouTubeThumbnail = (url: string | null) => {
